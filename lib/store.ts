@@ -95,6 +95,10 @@ export const useAppStore = create<AppState>((set, get) => ({
     Analytics.track('logout', {});
   },
 
+  setUser(user: User) {
+    set({ currentUser: user });
+  },
+
   tryAutoLogin() {
     const saved = DataLayer.getSession();
     if (!saved) return;
