@@ -55,7 +55,6 @@ export interface ParentRow {
   updated_at: string;
   last_login: string | null;
   email_reports_enabled: boolean;
-  weekly_summary_day: number;
   timezone: string;
   stripe_customer_id: string | null;
   referral_code: string;
@@ -68,7 +67,6 @@ export interface ChildRow {
   display_name: string;
   avatar: string;
   age: number | null;
-  pin_hash: string | null;
   active_pet: string;
   created_at: string;
   updated_at: string;
@@ -107,10 +105,8 @@ export interface ProgressRow {
   content_id: string;
   content_name: string | null;
   completed_at: string;
-  score: number | null;
   xp_earned: number;
   coins_earned: number;
-  time_spent_seconds: number | null;
   metadata: Record<string, unknown>;
 }
 
