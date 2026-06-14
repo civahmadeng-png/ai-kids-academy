@@ -4,13 +4,13 @@ import { useAuthStore } from '@/lib/auth-store';
 import { NAV_ITEMS } from '@/data/navigation';
 
 export default function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
-  const { currentScreen, navigate } = useAppStore();
+  const { currentScreen, navigate, currentUser } = useAppStore();
   const { activeChild, exitChildSession, signOut } = useAuthStore();
 
   if (!activeChild) return null;
 
-  // Use activeChild profile for XP/level display
-  const xp      = activeChild.profile?.xp ?? 0;
+  // Use currentUser.xp (updates live via addXP) with fallback to stored profile
+  const xp      = currentUser?.xp ?? activeChild.profile?.xp ?? 0;
   const coins   = activeChild.profile?.coins ?? 50;
   const gems    = activeChild.profile?.gems ?? 5;
   const streak  = activeChild.profile?.streak_days ?? 0;
