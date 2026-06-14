@@ -514,10 +514,40 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const profile = (child as any).child_profiles?.[0] ?? null;
+    const activeChild = toActiveChild(child, profile);
+    
     set({
-      activeChild: toActiveChild(child, profile),
+      activeChild,
       authScreen: 'app',
     });
+
+    // Initialize currentUser in the app store so addXP/addCoins work in real mode
+    // This bridges the Supabase auth world with the demo-era store
+    try {
+      const { useAppStore } = require('@/lib/store');
+      const { createDefaultUser } = require('@/lib/data-layer');
+      const appStore = useAppStore.getState();
+      if (!appStore.currentUser) {
+        const syntheticUser = createDefaultUser(
+          childId,
+          child.display_name,
+          '',
+          'child',
+          child.avatar ?? '🦊',
+          child.age ?? 10,
+        );
+        // Hydrate with real profile data if available
+        if (profile) {
+          syntheticUser.xp    = profile.xp    ?? 0;
+          syntheticUser.coins = profile.coins  ?? 50;
+          syntheticUser.gems  = profile.gems   ?? 5;
+          syntheticUser.streak = profile.streak_days ?? 0;
+          syntheticUser.level = profile.level  ?? 1;
+        }
+        appStore.setUser(syntheticUser);
+      }
+    } catch { /* store bridge optional */ }
+
     Analytics.track('child_selected', {});
   },
 
